@@ -2,8 +2,11 @@
 package image
 
 import (
+	"fmt"
 	"image"
 	"image/draw"
+
+	"vibe-imageborder/internal/models"
 )
 
 // Compositor handles image compositing.
@@ -112,4 +115,26 @@ func ToRGBA(img image.Image) *image.RGBA {
 	rgba := image.NewRGBA(bounds)
 	draw.Draw(rgba, bounds, img, bounds.Min, draw.Src)
 	return rgba
+}
+
+// CompositeWithText combines product, frame, and text overlays.
+func (c *Compositor) CompositeWithText(
+	product, frame image.Image,
+	bgColor string,
+	overlays map[string]models.TextOverlay,
+	textRenderer *TextRenderer,
+) (*CompositeResult, error) {
+	// First composite product + frame
+	result := c.Composite(product, frame, bgColor)
+
+	// Then draw text overlays
+	if textRenderer != nil && len(overlays) > 0 {
+		imgWithText, err := textRenderer.DrawOverlays(result.Image, overlays)
+		if err != nil {
+			return nil, fmt.Errorf("failed to draw text: %w", err)
+		}
+		result.Image = imgWithText
+	}
+
+	return result, nil
 }

@@ -41,7 +41,7 @@ Build desktop app to composite product images with frame overlays and text annot
 | 1 | Project Setup & Foundation | Completed | 2h | [phase-01](./phase-01-project-setup.md) |
 | 2 | Template Service | Completed | 2h | [phase-02](./phase-02-template-service.md) |
 | 3 | Image Service - Core | Completed | 3h | [phase-03](./phase-03-image-service-core.md) |
-| 4 | Image Service - Text Rendering | Pending | 2h | [phase-04](./phase-04-text-rendering.md) |
+| 4 | Image Service - Text Rendering | Completed | 2h | [phase-04](./phase-04-text-rendering.md) |
 | 5 | Wails Backend Integration | Pending | 2h | [phase-05](./phase-05-wails-backend.md) |
 | 6 | React Frontend | Pending | 3h | [phase-06](./phase-06-react-frontend.md) |
 | 7 | Integration & Testing | Pending | 1.5h | [phase-07](./phase-07-integration-testing.md) |
