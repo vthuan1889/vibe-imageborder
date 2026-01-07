@@ -69,7 +69,10 @@
       "Bash(git clone:*)",
       "Bash(go version:*)",
       "Bash(go vet:*)",
-      "Bash(npm --prefix frontend run build)"
+      "Bash(npm --prefix frontend run build)",
+      "Bash(go test:*)",
+      "Skill(code-review)",
+      "Skill(code-review:*)"
     ]
   }
 }

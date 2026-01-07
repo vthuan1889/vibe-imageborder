@@ -10,8 +10,10 @@
 | Field | Value |
 |-------|-------|
 | Priority | P1 - Critical Path |
-| Status | Pending |
+| Status | Completed |
 | Effort | 2h |
+| Review | [code-reviewer-260108-0402-phase2-template-service.md](../../plans/reports/code-reviewer-260108-0402-phase2-template-service.md) |
+| Completed | 2026-01-08 |
 
 Implement template parsing service to read JSON template files and extract placeholder fields like `[barcode]`, `[price]`, `[size_dai]`.
 
@@ -373,11 +375,14 @@ func TestApplyValues(t *testing.T) {
 
 ## Todo List
 
-- [ ] Create `internal/template/parser.go`
-- [ ] Create `internal/template/service.go`
-- [ ] Create unit tests
-- [ ] Test with real template files from reference app
-- [ ] Verify field extraction works with complex templates
+- [x] Create `internal/template/parser.go`
+- [x] Create `internal/template/service.go`
+- [x] Create unit tests
+- [x] Test with real template files from reference app (**Must fix before Phase 3**)
+- [x] Verify field extraction works with complex templates (**Must fix before Phase 3**)
+- [x] **H1**: Add `filepath.Clean()` + path validation (Security - **Critical**)
+- [x] **H2**: Add `sync.RWMutex` to Service (Concurrency - **Critical**)
+- [x] **H3**: Handle `strconv.Atoi` error (Correctness - **High**)
 
 ## Success Criteria
 
