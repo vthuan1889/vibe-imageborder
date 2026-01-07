@@ -10,7 +10,7 @@
 | Field | Value |
 |-------|-------|
 | Priority | P1 - Critical Path |
-| Status | Pending |
+| Status | Completed |
 | Effort | 2h |
 
 Implement text rendering on images using bundled fonts. Support Vietnamese diacritics, custom colors, positions, and font sizes.
@@ -402,13 +402,13 @@ func TestParseColorName(t *testing.T) {
 
 ## Todo List
 
-- [ ] Create `internal/image/fonts.go`
-- [ ] Create `internal/image/text.go`
-- [ ] Update `compositor.go` with text method
-- [ ] Update `main.go` for font embedding
-- [ ] Add unit tests
-- [ ] Test Vietnamese text rendering
-- [ ] Verify font loading works from embedded FS
+- [x] Create `internal/image/fonts.go`
+- [x] Create `internal/image/text.go`
+- [x] Update `compositor.go` with text method
+- [x] Update `main.go` for font embedding
+- [x] Add unit tests
+- [x] Test Vietnamese text rendering
+- [x] Verify font loading works from embedded FS
 
 ## Success Criteria
 

@@ -32,4 +32,5 @@ type ProcessProgress struct {
 	Current int    `json:"current"`
 	Total   int    `json:"total"`
 	File    string `json:"file"`
+	Success bool   `json:"success"`
 }

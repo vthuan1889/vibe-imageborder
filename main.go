@@ -21,7 +21,7 @@ func Fonts() embed.FS {
 }
 
 func main() {
-	app := NewApp()
+	app := NewApp(fonts)
 
 	err := wails.Run(&options.App{
 		Title:  "Image Border Tool",

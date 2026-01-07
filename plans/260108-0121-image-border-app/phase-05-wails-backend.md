@@ -10,8 +10,8 @@
 | Field | Value |
 |-------|-------|
 | Priority | P1 - Critical Path |
-| Status | Pending |
-| Effort | 2h |
+| Status | ⚠️ Complete with Issues |
+| Effort | 2h (actual) |
 
 Expose Go services to frontend via Wails bindings. Implement file dialogs, template loading, preview generation, and batch processing with progress events.
 
@@ -395,14 +395,27 @@ func main() {
 
 ## Todo List
 
-- [ ] Update App struct with services
-- [ ] Implement file selection dialogs
-- [ ] Implement template loading
-- [ ] Implement preview generation
-- [ ] Implement batch processing with events
-- [ ] Implement cancel functionality
-- [ ] Update main.go with initialization
-- [ ] Test all Wails bindings
+- [x] Update App struct with services
+- [x] Implement file selection dialogs
+- [x] Implement template loading
+- [x] Implement preview generation
+- [x] Implement batch processing with events
+- [x] Implement cancel functionality
+- [x] Update main.go with initialization
+- [ ] Test all Wails bindings (requires running app)
+- [ ] **FIX SECURITY ISSUES** (see review report)
+
+## Security Issues Found (Code Review 260108-0542)
+
+**Must fix before Phase 6:**
+
+1. **[CRITICAL]** Path traversal vulnerability - no path validation in file selection methods
+2. **[CRITICAL]** Incomplete batch size validation - missing zero-length and duplicate checks
+3. **[CRITICAL]** Race condition in cancel logic - needs isProcessing flag
+4. **[CRITICAL]** Silent error swallowing in template operations
+5. **[HIGH]** Output path collision - files may be overwritten
+
+**Full report:** `plans/reports/code-reviewer-260108-0542-phase5-wails-backend.md`
 
 ## Success Criteria
 
