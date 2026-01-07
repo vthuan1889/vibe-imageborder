@@ -60,7 +60,16 @@
       "Bash(go mod verify:*)",
       "Bash(npm audit:*)",
       "Bash(npm run build)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(wails version:*)",
+      "Bash(go mod:*)",
+      "Bash(wails generate:*)",
+      "Bash(npx tsc:*)",
+      "Bash(wails dev:*)",
+      "Bash(git clone:*)",
+      "Bash(go version:*)",
+      "Bash(go vet:*)",
+      "Bash(npm --prefix frontend run build)"
     ]
   }
 }
