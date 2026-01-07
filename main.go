@@ -24,13 +24,15 @@ func main() {
 	app := NewApp(fonts)
 
 	err := wails.Run(&options.App{
-		Title:  "Image Border Tool",
-		Width:  1200,
-		Height: 800,
+		Title:     "Image Border Tool",
+		Width:     1200,
+		Height:    800,
+		MinWidth:  800,
+		MinHeight: 600,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 255, G: 255, B: 255, A: 1},
+		BackgroundColour: &options.RGBA{R: 245, G: 245, B: 245, A: 1},
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
