@@ -10,8 +10,9 @@
 | Field | Value |
 |-------|-------|
 | Priority | P1 - Critical Path |
-| Status | Pending |
+| Status | Completed |
 | Effort | 3h |
+| Completed | 2026-01-08 |
 
 Implement core image processing: load, resize, composite product + frame overlay, save to multiple formats.
 
@@ -400,12 +401,12 @@ func TestComposite(t *testing.T) {
 
 ## Todo List
 
-- [ ] Create `internal/image/service.go`
-- [ ] Create `internal/image/compositor.go`
-- [ ] Create unit tests
-- [ ] Test with real product + frame images
-- [ ] Verify PNG transparency works
-- [ ] Benchmark composite performance
+- [x] Create `internal/image/service.go`
+- [x] Create `internal/image/compositor.go`
+- [x] Create unit tests
+- [x] Test with real product + frame images
+- [x] Verify PNG transparency works
+- [x] Benchmark composite performance
 
 ## Success Criteria
 
