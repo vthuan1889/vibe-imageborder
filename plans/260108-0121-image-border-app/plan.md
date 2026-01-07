@@ -1,7 +1,7 @@
 ---
 title: "Image Border App - Go + Wails 2"
 description: "Desktop app ghép hình sản phẩm + khung + text overlay"
-status: in-progress
+status: completed
 priority: P1
 effort: 16h
 branch: main
@@ -42,10 +42,10 @@ Build desktop app to composite product images with frame overlays and text annot
 | 2 | Template Service | Completed | 2h | [phase-02](./phase-02-template-service.md) |
 | 3 | Image Service - Core | Completed | 3h | [phase-03](./phase-03-image-service-core.md) |
 | 4 | Image Service - Text Rendering | Completed | 2h | [phase-04](./phase-04-text-rendering.md) |
-| 5 | Wails Backend Integration | Pending | 2h | [phase-05](./phase-05-wails-backend.md) |
-| 6 | React Frontend | Pending | 3h | [phase-06](./phase-06-react-frontend.md) |
-| 7 | Integration & Testing | Pending | 1.5h | [phase-07](./phase-07-integration-testing.md) |
-| 8 | Polish & Optimization | Pending | 0.5h | [phase-08](./phase-08-polish.md) |
+| 5 | Wails Backend Integration | Completed | 2h | [phase-05](./phase-05-wails-backend.md) |
+| 6 | React Frontend | Completed | 3h | [phase-06](./phase-06-react-frontend.md) |
+| 7 | Integration & Testing | Completed | 1.5h | [phase-07](./phase-07-integration-testing.md) |
+| 8 | Polish & Optimization | Completed | 0.5h | [phase-08](./phase-08-polish.md) |
 
 ## Tech Stack
 

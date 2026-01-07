@@ -80,3 +80,8 @@ func (fm *FontManager) GetFace(name string, size float64) (font.Face, error) {
 func DefaultFontName() string {
 	return "BeVietnamPro-Regular"
 }
+
+// VietnameseFontName returns font with Vietnamese support.
+func VietnameseFontName() string {
+	return "BeVietnamPro-Regular"
+}
