@@ -1,0 +1,20 @@
+{
+"barcode": {
+        "text": "[barcode]",
+        "position": "98,1720",
+        "fontsize": "45",
+        "color": "white"
+    },
+"size": {
+        "text": "D[size_dai] x R[size_rong] x C[size_cao] cm",
+        "position": "26,1852",
+        "fontsize": "40",
+        "color": "white"
+    },
+"sizell": {
+        "text": "LL D[llsize_dai] R[llsize_rong] C[llsize_cao] cm",
+        "position": "1480,1852",
+        "fontsize": "45",
+        "color": "white"
+    }
+}

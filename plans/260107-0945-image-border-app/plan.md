@@ -62,6 +62,7 @@ Backend (Go)
 
 ### [Phase 2: Template Service](phase-02-template-service.md)
 **Goal:** Parse template JSON, extract dynamic fields
+**Status:** DONE (2026-01-07 12:15 PM)
 
 **Tasks:**
 1. Define `TemplateField` và `Template` types

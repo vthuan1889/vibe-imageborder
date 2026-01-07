@@ -48,6 +48,27 @@ Giai đoạn 1 của dự án tập trung vào việc thiết lập kiến trúc
 -   **Tiêu chí chấp nhận**: Các phần phụ thuộc của Go và Node.js được quản lý thông qua `go.mod` và `package.json` tương ứng.
 -   **Ràng buộc kỹ thuật**: Các bản dựng phát triển và sản xuất phải hoạt động như mong đợi.
 
+### Giai đoạn 2: Dịch vụ Mẫu (Template Service)
+
+Giai đoạn 2 tập trung vào việc triển khai một dịch vụ mẫu mạnh mẽ để xử lý các mẫu (templates), cho phép trích xuất trường và thay thế biến động.
+
+-   **Backend (Go)**:
+    -   Tệp `internal/models/types.go` được cập nhật với các định nghĩa kiểu liên quan đến mẫu.
+    -   `internal/template/parser.go`: Triển khai logic phân tích mẫu để trích xuất các trường và biến.
+    -   `internal/template/service.go`: Cung cấp các chức năng để quản lý, xử lý và áp dụng các mẫu.
+    -   `internal/template/parser_test.go`: Các bài kiểm tra đơn vị cho trình phân tích mẫu, đảm bảo độ chính xác và độ tin cậy.
+
+-   **Kiểm tra**:
+    -   Độ bao phủ kiểm thử đạt 95.7%, đảm bảo chất lượng cao của mã.
+    -   Tất cả các bài kiểm tra đều vượt qua, xác nhận tính đúng đắn của việc triển khai dịch vụ mẫu.
+
+-   **Tính năng chính**:
+    -   Phân tích mẫu: Khả năng phân tích các chuỗi mẫu để xác định các phần tử động.
+    -   Trích xuất trường: Trích xuất chính xác các trường dữ liệu từ các mẫu đã cho.
+    -   Thay thế biến: Thay thế các biến trong mẫu bằng các giá trị được cung cấp một cách linh hoạt.
+
 ### Lịch sử thay đổi phiên bản
 
 -   **Giai đoạn 1 hoàn thành**: Thiết lập dự án ban đầu, cấu hình backend Go với Wails, tích hợp frontend React/TypeScript/Tailwind. (2026-01-07)
+-   **Giai đoạn 2 hoàn thành**: Triển khai Template Service với tính năng phân tích mẫu, trích xuất trường và thay thế biến. Độ bao phủ kiểm thử 95.7%. (2026-01-07)
+
