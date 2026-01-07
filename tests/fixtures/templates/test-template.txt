@@ -1,0 +1,21 @@
+{
+    "background": "#f1eeea",
+    "barcode": {
+        "text": "[barcode]",
+        "position": "100,50",
+        "fontsize": "24",
+        "color": "black"
+    },
+    "size_dai": {
+        "text": "[size_dai]",
+        "position": "100,100",
+        "fontsize": "20",
+        "color": "#333333"
+    },
+    "size_rong": {
+        "text": "[size_rong]",
+        "position": "200,100",
+        "fontsize": "20",
+        "color": "#333333"
+    }
+}
