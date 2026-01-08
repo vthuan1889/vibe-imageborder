@@ -9,6 +9,9 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+// Version info - injected at build time via ldflags
+var version = "dev"
+
 //go:embed all:frontend/dist
 var assets embed.FS
 

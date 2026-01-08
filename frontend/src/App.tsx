@@ -4,6 +4,7 @@ import { TemplateFields } from './components/TemplateFields';
 import { Preview } from './components/Preview';
 import { ProgressBar } from './components/ProgressBar';
 import { OutputSettings } from './components/OutputSettings';
+import { UpdateButton } from './components/UpdateButton';
 
 import {
   SelectProductFiles,
@@ -173,9 +174,15 @@ function App() {
   const canGenerate = canPreview && outputFolder !== '';
 
   return (
-    <div className="h-screen p-4 flex gap-4">
-      {/* Column 1: Inputs */}
-      <div className="w-2/5 flex flex-col gap-4 overflow-y-auto">
+    <div className="h-screen p-4 flex flex-col">
+      {/* Header with version and update button */}
+      <div className="flex justify-end mb-4">
+        <UpdateButton />
+      </div>
+
+      <div className="flex-1 flex gap-4 overflow-hidden">
+        {/* Column 1: Inputs */}
+        <div className="w-2/5 flex flex-col gap-4 overflow-y-auto">
         <FilePicker
           label="Product Images"
           icon="📁"
@@ -258,6 +265,7 @@ function App() {
               Generate All ({productFiles.length} images)
             </button>
           )}
+        </div>
         </div>
       </div>
     </div>

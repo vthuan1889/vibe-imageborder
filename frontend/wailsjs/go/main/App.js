@@ -6,6 +6,14 @@ export function CancelProcessing() {
   return window['go']['main']['App']['CancelProcessing']();
 }
 
+export function CheckForUpdate() {
+  return window['go']['main']['App']['CheckForUpdate']();
+}
+
+export function DownloadAndInstallUpdate(arg1) {
+  return window['go']['main']['App']['DownloadAndInstallUpdate'](arg1);
+}
+
 export function GeneratePreview(arg1) {
   return window['go']['main']['App']['GeneratePreview'](arg1);
 }
@@ -16,6 +24,10 @@ export function GetDefaultOutputFolder() {
 
 export function GetTemplateBackground(arg1) {
   return window['go']['main']['App']['GetTemplateBackground'](arg1);
+}
+
+export function GetVersion() {
+  return window['go']['main']['App']['GetVersion']();
 }
 
 export function LoadTemplate(arg1) {

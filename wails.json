@@ -9,5 +9,12 @@
   "author": {
     "name": "TT PC 2",
     "email": "vthuan1889@gmail.com"
+  },
+  "info": {
+    "companyName": "TT PC 2",
+    "productName": "Image Border Tool",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright 2026 TT PC 2",
+    "comments": "A tool to add borders and frames to images"
   }
 }

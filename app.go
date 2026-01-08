@@ -18,6 +18,7 @@ import (
 	imgservice "vibe-imageborder/internal/image"
 	"vibe-imageborder/internal/models"
 	"vibe-imageborder/internal/template"
+	"vibe-imageborder/internal/updater"
 )
 
 // MaxBatchSize limits the number of images that can be processed in one batch.
@@ -435,4 +436,24 @@ func (a *App) CancelProcessing() {
 	if a.cancelFunc != nil {
 		a.cancelFunc()
 	}
+}
+
+// GetVersion returns the current app version.
+func (a *App) GetVersion() string {
+	return version
+}
+
+// CheckForUpdate queries GitHub for available updates.
+func (a *App) CheckForUpdate() (*updater.UpdateInfo, error) {
+	return updater.CheckUpdate(version)
+}
+
+// DownloadAndInstallUpdate downloads and runs the installer, then quits the app.
+func (a *App) DownloadAndInstallUpdate(downloadURL string) error {
+	if err := updater.DownloadAndInstall(downloadURL); err != nil {
+		return err
+	}
+	// Quit app after starting installer
+	runtime.Quit(a.ctx)
+	return nil
 }
