@@ -73,7 +73,9 @@
       "Bash(go test:*)",
       "Skill(code-review)",
       "Skill(code-review:*)",
-      "Bash(unzip:*)"
+      "Bash(unzip:*)",
+      "Bash(git tag:*)",
+      "Bash(git push:*)"
     ]
   }
 }
