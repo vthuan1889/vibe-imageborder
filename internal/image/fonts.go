@@ -10,6 +10,12 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
+// Font name constants.
+const (
+	FontBeVietnamPro = "BeVietnamPro-Regular"
+	FontRoboto       = "Roboto-Regular"
+)
+
 // FontManager handles font loading and caching.
 type FontManager struct {
 	fonts embed.FS
@@ -57,11 +63,19 @@ func (fm *FontManager) LoadFont(name string) (*opentype.Font, error) {
 	return f, nil
 }
 
-// GetFace returns font.Face for given font and size.
+// GetFace returns font.Face for given font and size with fallback support.
 func (fm *FontManager) GetFace(name string, size float64) (font.Face, error) {
 	f, err := fm.LoadFont(name)
 	if err != nil {
-		return nil, err
+		// Fallback to Roboto if primary font fails
+		if name != FontRoboto {
+			f, err = fm.LoadFont(FontRoboto)
+			if err != nil {
+				return nil, fmt.Errorf("failed to load fallback font: %w", err)
+			}
+		} else {
+			return nil, err
+		}
 	}
 
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{
@@ -78,10 +92,15 @@ func (fm *FontManager) GetFace(name string, size float64) (font.Face, error) {
 
 // DefaultFontName returns default font to use.
 func DefaultFontName() string {
-	return "BeVietnamPro-Regular"
+	return FontBeVietnamPro
+}
+
+// FallbackFontName returns fallback font when primary fails.
+func FallbackFontName() string {
+	return FontRoboto
 }
 
 // VietnameseFontName returns font with Vietnamese support.
 func VietnameseFontName() string {
-	return "BeVietnamPro-Regular"
+	return FontBeVietnamPro
 }
