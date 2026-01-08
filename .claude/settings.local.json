@@ -72,7 +72,8 @@
       "Bash(npm --prefix frontend run build)",
       "Bash(go test:*)",
       "Skill(code-review)",
-      "Skill(code-review:*)"
+      "Skill(code-review:*)",
+      "Bash(unzip:*)"
     ]
   }
 }
