@@ -18,7 +18,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.23'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,7 +43,7 @@ jobs:
       - name: Build with Wails
         shell: powershell
         run: |
-          wails build --target windows/amd64 --nsis -ldflags "-X 'main.version=${{ steps.version.outputs.VERSION }}'"
+          wails build -platform windows/amd64 -nsis -ldflags "-X 'main.version=${{ steps.version.outputs.VERSION }}'"
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
