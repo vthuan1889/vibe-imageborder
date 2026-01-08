@@ -10,6 +10,7 @@ import {
   SelectFrameFile,
   SelectTemplateFile,
   SelectOutputFolder,
+  GetDefaultOutputFolder,
   LoadTemplate,
   GeneratePreview,
   ProcessBatch,
@@ -42,6 +43,11 @@ function App() {
 
   // Event listeners
   useEffect(() => {
+    // Load default output folder on startup
+    GetDefaultOutputFolder().then((folder) => {
+      if (folder) setOutputFolder(folder);
+    });
+
     EventsOn('progress', (data: { current: number; total: number; file: string }) => {
       setProgress({ current: data.current, total: data.total, file: data.file });
     });

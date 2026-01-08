@@ -164,6 +164,19 @@ func (a *App) SelectOutputFolder() (string, error) {
 	return validatePath(folder)
 }
 
+// GetDefaultOutputFolder returns the user's Downloads folder as default output.
+func (a *App) GetDefaultOutputFolder() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	downloads := filepath.Join(home, "Downloads")
+	if _, err := os.Stat(downloads); err == nil {
+		return downloads
+	}
+	return home
+}
+
 // LoadTemplate loads template and returns field names.
 func (a *App) LoadTemplate(path string) ([]string, error) {
 	if path == "" {

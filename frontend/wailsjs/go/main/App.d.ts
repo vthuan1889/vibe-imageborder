@@ -6,6 +6,8 @@ export function CancelProcessing():Promise<void>;
 
 export function GeneratePreview(arg1:models.ProcessRequest):Promise<string>;
 
+export function GetDefaultOutputFolder():Promise<string>;
+
 export function GetTemplateBackground(arg1:string):Promise<string>;
 
 export function LoadTemplate(arg1:string):Promise<Array<string>>;

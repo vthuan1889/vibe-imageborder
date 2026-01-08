@@ -10,6 +10,10 @@ export function GeneratePreview(arg1) {
   return window['go']['main']['App']['GeneratePreview'](arg1);
 }
 
+export function GetDefaultOutputFolder() {
+  return window['go']['main']['App']['GetDefaultOutputFolder']();
+}
+
 export function GetTemplateBackground(arg1) {
   return window['go']['main']['App']['GetTemplateBackground'](arg1);
 }
