@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 )
 
 const (
@@ -102,8 +103,11 @@ func DownloadAndInstall(downloadURL string) error {
 	}
 	out.Close()
 
-	// Run installer (detached process)
-	cmd := exec.Command(installerPath)
+	// Run installer with elevation via PowerShell on Windows
+	cmd := exec.Command("powershell.exe", "-Command", fmt.Sprintf(`Start-Process -FilePath "%s" -Verb RunAs`, installerPath))
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("cannot start installer: %w", err)
 	}
