@@ -5,6 +5,7 @@ import { Preview } from './components/Preview';
 import { ProgressBar } from './components/ProgressBar';
 import { OutputSettings } from './components/OutputSettings';
 import { UpdateButton } from './components/UpdateButton';
+import { StorageService } from './utils/storage';
 
 import {
   SelectProductFiles,
@@ -20,19 +21,22 @@ import {
 import { EventsOn, EventsOff } from '../wailsjs/runtime/runtime';
 
 function App() {
+  // Load initial state from localStorage
+  const savedState = StorageService.loadState();
+
   // File state
-  const [productFiles, setProductFiles] = useState<string[]>([]);
-  const [frameFile, setFrameFile] = useState<string>('');
-  const [templateFile, setTemplateFile] = useState<string>('');
+  const [productFiles, setProductFiles] = useState<string[]>(savedState.productFiles || []);
+  const [frameFile, setFrameFile] = useState<string>(savedState.frameFile || '');
+  const [templateFile, setTemplateFile] = useState<string>(savedState.templateFile || '');
 
   // Template state
-  const [templateFields, setTemplateFields] = useState<string[]>([]);
-  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [templateFields, setTemplateFields] = useState<string[]>(savedState.templateFields || []);
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>(savedState.fieldValues || {});
 
   // Output state
-  const [format, setFormat] = useState('png');
-  const [quality, setQuality] = useState(90);
-  const [outputFolder, setOutputFolder] = useState('');
+  const [format, setFormat] = useState(savedState.format || 'png');
+  const [quality, setQuality] = useState(savedState.quality || 90);
+  const [outputFolder, setOutputFolder] = useState(savedState.outputFolder || '');
 
   // Preview state
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -78,7 +82,10 @@ function App() {
   const handleSelectProducts = async () => {
     try {
       const files = await SelectProductFiles();
-      if (files && files.length > 0) setProductFiles(files);
+      if (files && files.length > 0) {
+        setProductFiles(files);
+        StorageService.saveProductFiles(files);
+      }
     } catch (e) {
       console.error('Failed to select products:', e);
     }
@@ -87,7 +94,10 @@ function App() {
   const handleSelectFrame = async () => {
     try {
       const file = await SelectFrameFile();
-      if (file) setFrameFile(file);
+      if (file) {
+        setFrameFile(file);
+        StorageService.saveFrameFile(file);
+      }
     } catch (e) {
       console.error('Failed to select frame:', e);
     }
@@ -98,9 +108,12 @@ function App() {
       const file = await SelectTemplateFile();
       if (file) {
         setTemplateFile(file);
+        StorageService.saveTemplateFile(file);
         const fields = await LoadTemplate(file);
         setTemplateFields(fields || []);
+        StorageService.saveTemplateFields(fields || []);
         setFieldValues({});
+        StorageService.saveFieldValues({});
       }
     } catch (e) {
       console.error('Failed to load template:', e);
@@ -110,24 +123,35 @@ function App() {
   const handleSelectOutput = async () => {
     try {
       const folder = await SelectOutputFolder();
-      if (folder) setOutputFolder(folder);
+      if (folder) {
+        setOutputFolder(folder);
+        StorageService.saveOutputFolder(folder);
+      }
     } catch (e) {
       console.error('Failed to select output folder:', e);
     }
   };
 
   const handleFieldChange = (field: string, value: string) => {
-    setFieldValues((prev) => ({ ...prev, [field]: value }));
+    setFieldValues((prev) => {
+      const updated = { ...prev, [field]: value };
+      StorageService.saveFieldValues(updated);
+      return updated;
+    });
   };
 
   const handlePreview = async () => {
     setIsPreviewLoading(true);
     try {
+      // Only send non-empty field values
+      const filledValues = Object.fromEntries(
+        Object.entries(fieldValues).filter(([, value]) => value.trim() !== '')
+      );
       const data = await GeneratePreview({
         productImages: productFiles,
         frameImage: frameFile,
         templatePath: templateFile,
-        fieldValues,
+        fieldValues: filledValues,
         outputDir: outputFolder,
         format,
         quality,
@@ -150,11 +174,15 @@ function App() {
     setProgress({ current: 0, total: productFiles.length, file: '' });
 
     try {
+      // Only send non-empty field values
+      const filledValues = Object.fromEntries(
+        Object.entries(fieldValues).filter(([, value]) => value.trim() !== '')
+      );
       await ProcessBatch({
         productImages: productFiles,
         frameImage: frameFile,
         templatePath: templateFile,
-        fieldValues,
+        fieldValues: filledValues,
         outputDir: outputFolder,
         format,
         quality,
@@ -189,7 +217,10 @@ function App() {
           files={productFiles}
           multiple
           onSelect={handleSelectProducts}
-          onClear={() => setProductFiles([])}
+          onClear={() => {
+            setProductFiles([]);
+            StorageService.saveProductFiles([]);
+          }}
         />
 
         <FilePicker
@@ -197,7 +228,10 @@ function App() {
           icon="🖼️"
           files={frameFile ? [frameFile] : []}
           onSelect={handleSelectFrame}
-          onClear={() => setFrameFile('')}
+          onClear={() => {
+            setFrameFile('');
+            StorageService.saveFrameFile('');
+          }}
         />
 
         <FilePicker
@@ -209,6 +243,9 @@ function App() {
             setTemplateFile('');
             setTemplateFields([]);
             setFieldValues({});
+            StorageService.saveTemplateFile('');
+            StorageService.saveTemplateFields([]);
+            StorageService.saveFieldValues({});
           }}
         />
 
@@ -232,8 +269,14 @@ function App() {
           format={format}
           quality={quality}
           outputFolder={outputFolder}
-          onFormatChange={setFormat}
-          onQualityChange={setQuality}
+          onFormatChange={(newFormat) => {
+            setFormat(newFormat);
+            StorageService.saveFormat(newFormat);
+          }}
+          onQualityChange={(newQuality) => {
+            setQuality(newQuality);
+            StorageService.saveQuality(newQuality);
+          }}
           onSelectFolder={handleSelectOutput}
         />
 

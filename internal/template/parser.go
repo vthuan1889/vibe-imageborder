@@ -118,13 +118,18 @@ func ExtractFields(config *models.TemplateConfig) []string {
 }
 
 // ApplyValues replaces placeholders with actual values.
+// Skips overlays that have unfilled placeholders.
 func ApplyValues(config *models.TemplateConfig, values map[string]string) map[string]models.TextOverlay {
 	result := make(map[string]models.TextOverlay)
 
 	for key, overlay := range config.Fields {
 		newOverlay := overlay
 		newOverlay.Text = replacePlaceholders(overlay.Text, values)
-		result[key] = newOverlay
+		
+		// Skip if text still contains unfilled placeholders like [price]
+		if !fieldRegex.MatchString(newOverlay.Text) {
+			result[key] = newOverlay
+		}
 	}
 
 	return result
