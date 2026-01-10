@@ -13,6 +13,7 @@ type TextOverlay struct {
 type TemplateConfig struct {
 	Background string                 `json:"background,omitempty"`
 	Fields     map[string]TextOverlay `json:"-"`
+	FieldOrder []string               `json:"-"` // Preserves field order from JSON
 	Raw        map[string]interface{} `json:"-"`
 }
 

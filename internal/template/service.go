@@ -2,42 +2,20 @@
 package template
 
 import (
-	"sync"
-
 	"vibe-imageborder/internal/models"
 )
 
-// Service handles template operations with caching.
-type Service struct {
-	cache map[string]*models.TemplateConfig
-	mu    sync.RWMutex
-}
+// Service handles template operations.
+type Service struct{}
 
 // NewService creates new template service.
 func NewService() *Service {
-	return &Service{
-		cache: make(map[string]*models.TemplateConfig),
-	}
+	return &Service{}
 }
 
-// LoadTemplate loads and caches template.
+// LoadTemplate loads template from file (always fresh read).
 func (s *Service) LoadTemplate(path string) (*models.TemplateConfig, error) {
-	s.mu.RLock()
-	if cached, ok := s.cache[path]; ok {
-		s.mu.RUnlock()
-		return cached, nil
-	}
-	s.mu.RUnlock()
-
-	config, err := ParseTemplate(path)
-	if err != nil {
-		return nil, err
-	}
-
-	s.mu.Lock()
-	s.cache[path] = config
-	s.mu.Unlock()
-	return config, nil
+	return ParseTemplate(path)
 }
 
 // GetFields returns unique field names from template.
@@ -65,11 +43,4 @@ func (s *Service) GetBackground(path string) (string, error) {
 		return "", err
 	}
 	return config.Background, nil
-}
-
-// ClearCache clears template cache.
-func (s *Service) ClearCache() {
-	s.mu.Lock()
-	s.cache = make(map[string]*models.TemplateConfig)
-	s.mu.Unlock()
 }

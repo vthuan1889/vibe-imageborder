@@ -2,6 +2,7 @@
 package template
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -19,7 +20,7 @@ var fieldRegex = regexp.MustCompile(`\[([^\]]+)\]`)
 // defaultFontSize is used when fontsize parsing fails.
 const defaultFontSize = 24
 
-// ParseTemplate reads and parses template JSON file.
+// ParseTemplate reads and parses template JSON file preserving field order.
 func ParseTemplate(path string) (*models.TemplateConfig, error) {
 	// Clean path to prevent directory traversal
 	cleanPath := filepath.Clean(path)
@@ -29,24 +30,36 @@ func ParseTemplate(path string) (*models.TemplateConfig, error) {
 		return nil, fmt.Errorf("failed to read template: %w", err)
 	}
 
-	var raw map[string]interface{}
-	if err := json.Unmarshal(data, &raw); err != nil {
-		return nil, fmt.Errorf("invalid JSON: %w", err)
-	}
-
 	config := &models.TemplateConfig{
-		Fields: make(map[string]models.TextOverlay),
-		Raw:    raw,
+		Fields:     make(map[string]models.TextOverlay),
+		FieldOrder: []string{},
 	}
 
-	// Extract background if exists
-	if bg, ok := raw["background"].(string); ok {
-		config.Background = bg
+	// Parse JSON preserving key order using decoder
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	token, err := decoder.Token()
+	if err != nil || token != json.Delim('{') {
+		return nil, fmt.Errorf("invalid JSON: expected object")
 	}
 
-	// Parse each field that has text overlay structure
-	for key, val := range raw {
+	for decoder.More() {
+		// Get key
+		keyToken, err := decoder.Token()
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON: %w", err)
+		}
+		key := keyToken.(string)
+
+		// Get value
+		var val interface{}
+		if err := decoder.Decode(&val); err != nil {
+			return nil, fmt.Errorf("invalid JSON value for %s: %w", key, err)
+		}
+
 		if key == "background" {
+			if bg, ok := val.(string); ok {
+				config.Background = bg
+			}
 			continue
 		}
 
@@ -55,6 +68,13 @@ func ParseTemplate(path string) (*models.TemplateConfig, error) {
 			continue // Skip non-overlay fields
 		}
 		config.Fields[key] = overlay
+		config.FieldOrder = append(config.FieldOrder, key)
+	}
+
+	// Also store raw for compatibility
+	var raw map[string]interface{}
+	if err := json.Unmarshal(data, &raw); err == nil {
+		config.Raw = raw
 	}
 
 	return config, nil
@@ -97,23 +117,23 @@ func parseOverlay(val interface{}) (models.TextOverlay, error) {
 	return overlay, nil
 }
 
-// ExtractFields returns unique field names from template.
+// ExtractFields returns unique field names from template in order.
 func ExtractFields(config *models.TemplateConfig) []string {
-	fieldSet := make(map[string]bool)
+	seen := make(map[string]bool)
+	fields := []string{}
 
-	for _, overlay := range config.Fields {
+	// Iterate in preserved order
+	for _, key := range config.FieldOrder {
+		overlay := config.Fields[key]
 		matches := fieldRegex.FindAllStringSubmatch(overlay.Text, -1)
 		for _, match := range matches {
-			if len(match) > 1 {
-				fieldSet[match[1]] = true
+			if len(match) > 1 && !seen[match[1]] {
+				seen[match[1]] = true
+				fields = append(fields, match[1])
 			}
 		}
 	}
 
-	fields := make([]string, 0, len(fieldSet))
-	for field := range fieldSet {
-		fields = append(fields, field)
-	}
 	return fields
 }
 
