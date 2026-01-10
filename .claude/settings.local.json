@@ -75,7 +75,9 @@
       "Skill(code-review:*)",
       "Bash(unzip:*)",
       "Bash(git tag:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(~\\\\.claude\\\\skills\\\\.venv\\\\Scripts\\\\python.exe:*)",
+      "Bash(powershell.exe -Command:*)"
     ]
   }
 }
