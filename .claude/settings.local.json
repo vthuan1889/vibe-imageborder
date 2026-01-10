@@ -36,7 +36,6 @@
       "Bash(npm install:*)",
       "Skill(ai-multimodal)",
       "Skill(ai-multimodal:*)",
-      "Bash(C:Usersthuan.claudeskills.venvScriptspython.exe:*)",
       "Bash(./.claude/scripts/repomix.sh:*)",
       "Bash(timeout:*)",
       "Bash(go install:*)",
