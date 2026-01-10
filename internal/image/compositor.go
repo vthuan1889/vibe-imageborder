@@ -27,11 +27,14 @@ type CompositeResult struct {
 }
 
 // Composite combines product and frame images.
-// Product is resized to fit frame, then frame overlaid on top.
+// Uses the smaller dimensions between product and frame as target size.
 func (c *Compositor) Composite(product, frame image.Image, bgColor string) *CompositeResult {
+	productBounds := product.Bounds()
 	frameBounds := frame.Bounds()
-	width := frameBounds.Dx()
-	height := frameBounds.Dy()
+
+	// Use smaller dimensions between product and frame
+	width := min(productBounds.Dx(), frameBounds.Dx())
+	height := min(productBounds.Dy(), frameBounds.Dy())
 
 	canvas := image.NewRGBA(image.Rect(0, 0, width, height))
 
@@ -41,20 +44,29 @@ func (c *Compositor) Composite(product, frame image.Image, bgColor string) *Comp
 		draw.Draw(canvas, canvas.Bounds(), bg, image.Point{}, draw.Src)
 	}
 
-	// Resize product to fit frame dimensions
+	// Resize product to fit target dimensions
 	resizedProduct := c.service.ResizeToFit(product, width, height)
 
+	// Resize frame to fit target dimensions
+	resizedFrame := c.service.ResizeToFit(frame, width, height)
+
 	// Center product on canvas
-	productBounds := resizedProduct.Bounds()
-	offsetX := (width - productBounds.Dx()) / 2
-	offsetY := (height - productBounds.Dy()) / 2
+	productRect := resizedProduct.Bounds()
+	offsetX := (width - productRect.Dx()) / 2
+	offsetY := (height - productRect.Dy()) / 2
 
 	// Draw product first (background)
-	draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productBounds.Dx(), offsetY+productBounds.Dy()),
+	draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productRect.Dx(), offsetY+productRect.Dy()),
 		resizedProduct, image.Point{}, draw.Over)
 
+	// Center frame on canvas
+	frameRect := resizedFrame.Bounds()
+	frameOffsetX := (width - frameRect.Dx()) / 2
+	frameOffsetY := (height - frameRect.Dy()) / 2
+
 	// Draw frame overlay (with alpha)
-	draw.Draw(canvas, canvas.Bounds(), frame, image.Point{}, draw.Over)
+	draw.Draw(canvas, image.Rect(frameOffsetX, frameOffsetY, frameOffsetX+frameRect.Dx(), frameOffsetY+frameRect.Dy()),
+		resizedFrame, image.Point{}, draw.Over)
 
 	return &CompositeResult{
 		Image:  canvas,
@@ -65,9 +77,12 @@ func (c *Compositor) Composite(product, frame image.Image, bgColor string) *Comp
 
 // CompositeWithPosition allows custom product positioning.
 func (c *Compositor) CompositeWithPosition(product, frame image.Image, bgColor string, position string) *CompositeResult {
+	productBounds := product.Bounds()
 	frameBounds := frame.Bounds()
-	width := frameBounds.Dx()
-	height := frameBounds.Dy()
+
+	// Use smaller dimensions between product and frame
+	width := min(productBounds.Dx(), frameBounds.Dx())
+	height := min(productBounds.Dy(), frameBounds.Dy())
 
 	canvas := image.NewRGBA(image.Rect(0, 0, width, height))
 
@@ -77,25 +92,32 @@ func (c *Compositor) CompositeWithPosition(product, frame image.Image, bgColor s
 		draw.Draw(canvas, canvas.Bounds(), bg, image.Point{}, draw.Src)
 	}
 
-	// Resize product to fit
+	// Resize both images to fit target dimensions
 	resizedProduct := c.service.ResizeToFit(product, width, height)
-	productBounds := resizedProduct.Bounds()
+	resizedFrame := c.service.ResizeToFit(frame, width, height)
 
-	// Center product
-	offsetX := (width - productBounds.Dx()) / 2
-	offsetY := (height - productBounds.Dy()) / 2
+	// Calculate center positions
+	productRect := resizedProduct.Bounds()
+	offsetX := (width - productRect.Dx()) / 2
+	offsetY := (height - productRect.Dy()) / 2
+
+	frameRect := resizedFrame.Bounds()
+	frameOffsetX := (width - frameRect.Dx()) / 2
+	frameOffsetY := (height - frameRect.Dy()) / 2
 
 	// Handle position-based ordering
 	if position == "below" {
 		// Frame first, then product
-		draw.Draw(canvas, canvas.Bounds(), frame, image.Point{}, draw.Over)
-		draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productBounds.Dx(), offsetY+productBounds.Dy()),
+		draw.Draw(canvas, image.Rect(frameOffsetX, frameOffsetY, frameOffsetX+frameRect.Dx(), frameOffsetY+frameRect.Dy()),
+			resizedFrame, image.Point{}, draw.Over)
+		draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productRect.Dx(), offsetY+productRect.Dy()),
 			resizedProduct, image.Point{}, draw.Over)
 	} else {
 		// Product first, then frame (default)
-		draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productBounds.Dx(), offsetY+productBounds.Dy()),
+		draw.Draw(canvas, image.Rect(offsetX, offsetY, offsetX+productRect.Dx(), offsetY+productRect.Dy()),
 			resizedProduct, image.Point{}, draw.Over)
-		draw.Draw(canvas, canvas.Bounds(), frame, image.Point{}, draw.Over)
+		draw.Draw(canvas, image.Rect(frameOffsetX, frameOffsetY, frameOffsetX+frameRect.Dx(), frameOffsetY+frameRect.Dy()),
+			resizedFrame, image.Point{}, draw.Over)
 	}
 
 	return &CompositeResult{
