@@ -11,7 +11,7 @@
 | 3. Dịch vụ hình ảnh - Core | Đang chờ xử lý | | | 0% | Xử lý hình ảnh cốt lõi: kết hợp, thay đổi kích thước. |
 | 4. Dịch vụ hình ảnh - Kết xuất văn bản | Đang chờ xử lý | | | 0% | Kết xuất văn bản và phông chữ lên hình ảnh. |
 | 5. Tích hợp phụ trợ Wails | Đang chờ xử lý | | | 0% | Kết nối các dịch vụ phụ trợ với giao diện Wails. |
-| 6. Giao diện người dùng React | Đang chờ xử lý | | | 0% | Phát triển giao diện người dùng React với các thành phần. |
+| 6. Giao diện người dùng React | Đang tiến hành | 2026-01-08 | | ~60% | UI 2 cột + sidebar điều hướng; Create Frame hoàn chỉnh; Frame Library & Settings đang placeholder. |
 | 7. Tích hợp & Kiểm thử | Đang chờ xử lý | | | 0% | Kiểm thử tích hợp và kiểm thử end-to-end. |
 | 8. Hoàn thiện & Tối ưu hóa | Đang chờ xử lý | | | 0% | Các chỉnh sửa cuối cùng, tối ưu hóa hiệu suất. |
 

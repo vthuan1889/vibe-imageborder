@@ -1,3 +1,5 @@
+import type { AppView } from '../types/navigation';
+
 // localStorage keys
 const STORAGE_KEYS = {
   PRODUCT_FILES: 'vibe_product_files',
@@ -8,7 +10,12 @@ const STORAGE_KEYS = {
   OUTPUT_FORMAT: 'vibe_output_format',
   OUTPUT_QUALITY: 'vibe_output_quality',
   OUTPUT_FOLDER: 'vibe_output_folder',
+  COPY_SOURCE_FOLDER: 'vibe_copy_source_folder',
+  COPY_DEST_FOLDER: 'vibe_copy_dest_folder',
+  ACTIVE_VIEW: 'vibe_active_view',
 };
+
+const VALID_VIEWS: AppView[] = ['create-frame', 'copy-image', 'frame-library', 'settings'];
 
 export interface AppState {
   productFiles: string[];
@@ -55,6 +62,18 @@ export const StorageService = {
     localStorage.setItem(STORAGE_KEYS.OUTPUT_FOLDER, folder);
   },
 
+  saveCopySourceFolder: (folder: string) => {
+    localStorage.setItem(STORAGE_KEYS.COPY_SOURCE_FOLDER, folder);
+  },
+
+  saveCopyDestFolder: (folder: string) => {
+    localStorage.setItem(STORAGE_KEYS.COPY_DEST_FOLDER, folder);
+  },
+
+  saveActiveView: (view: AppView) => {
+    localStorage.setItem(STORAGE_KEYS.ACTIVE_VIEW, view);
+  },
+
   // Load individual values
   loadProductFiles: (): string[] => {
     const stored = localStorage.getItem(STORAGE_KEYS.PRODUCT_FILES);
@@ -90,6 +109,19 @@ export const StorageService = {
 
   loadOutputFolder: (): string => {
     return localStorage.getItem(STORAGE_KEYS.OUTPUT_FOLDER) || '';
+  },
+
+  loadCopySourceFolder: (): string => {
+    return localStorage.getItem(STORAGE_KEYS.COPY_SOURCE_FOLDER) || '';
+  },
+
+  loadCopyDestFolder: (): string => {
+    return localStorage.getItem(STORAGE_KEYS.COPY_DEST_FOLDER) || '';
+  },
+
+  loadActiveView: (): AppView => {
+    const stored = localStorage.getItem(STORAGE_KEYS.ACTIVE_VIEW) as AppView | null;
+    return stored && VALID_VIEWS.includes(stored) ? stored : 'create-frame';
   },
 
   // Load all state at once

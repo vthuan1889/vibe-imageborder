@@ -29,7 +29,11 @@ cd frontend && npm install && npm run build   # Build frontend
 **React Frontend**
 - `frontend/src/`: Vite + TypeScript, Tailwind CSS
 - `frontend/wailsjs/`: Auto-generated Wails bindings
-- Main entry: `App.tsx` with UI components
+- `App.tsx`: Layout shell (sidebar + view switcher)
+- `views/CreateFrameView.tsx`: Main batch compose workflow
+- `views/CopyImageView.tsx`: Recursive image copy with uniquify fingerprint
+- `components/Sidebar.tsx`, `types/navigation.ts`: Sidebar navigation
+- View-based routing via `activeView` state (no react-router)
 
 **Key APIs**
 - Batch image processing with progress events (EventProgress, EventComplete)

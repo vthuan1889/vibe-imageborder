@@ -35,3 +35,9 @@ type ProcessProgress struct {
 	File    string `json:"file"`
 	Success bool   `json:"success"`
 }
+
+// CopyImagesRequest represents a batch copy request from frontend.
+type CopyImagesRequest struct {
+	SourceDir string `json:"sourceDir"`
+	DestDir   string `json:"destDir"`
+}

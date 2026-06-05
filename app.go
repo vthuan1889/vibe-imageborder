@@ -6,12 +6,14 @@ import (
 	"embed"
 	"encoding/base64"
 	"fmt"
+	"hash/fnv"
 	"image"
 	"image/png"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -426,6 +428,123 @@ func (a *App) processSingleImage(
 	}
 
 	return a.imageSvc.SaveImage(result.Image, outputPath, req.Format, req.Quality)
+}
+
+// CopyImages copies all images from source to destination recursively,
+// applying imperceptible modifications so each file has a unique fingerprint.
+func (a *App) CopyImages(req models.CopyImagesRequest) error {
+	sourceDir, err := validatePath(req.SourceDir)
+	if err != nil {
+		return fmt.Errorf("invalid source directory: %w", err)
+	}
+	if sourceDir == "" {
+		return fmt.Errorf("source directory required")
+	}
+
+	destDir, err := validatePath(req.DestDir)
+	if err != nil {
+		return fmt.Errorf("invalid destination directory: %w", err)
+	}
+	if destDir == "" {
+		return fmt.Errorf("destination directory required")
+	}
+
+	if sourceDir == destDir {
+		return fmt.Errorf("source and destination folders must be different")
+	}
+
+	files, err := imgservice.CollectImageFiles(sourceDir, MaxBatchSize)
+	if err != nil {
+		return err
+	}
+
+	a.processingLock.Lock()
+	if a.isProcessing {
+		a.processingLock.Unlock()
+		return fmt.Errorf("another batch is already processing")
+	}
+	a.isProcessing = true
+
+	ctx, cancel := context.WithCancel(a.ctx)
+	a.cancelFunc = cancel
+	a.processingLock.Unlock()
+
+	defer func() {
+		a.processingLock.Lock()
+		a.cancelFunc = nil
+		a.isProcessing = false
+		a.processingLock.Unlock()
+	}()
+
+	total := len(files)
+	var failures []string
+
+	for i, srcPath := range files {
+		select {
+		case <-ctx.Done():
+			runtime.EventsEmit(a.ctx, EventCancelled, nil)
+			return nil
+		default:
+		}
+
+		err := a.copySingleImage(srcPath, sourceDir, destDir)
+		success := err == nil
+		if !success {
+			failures = append(failures, filepath.Base(srcPath))
+			fmt.Printf("Error copying %s: %v\n", srcPath, err)
+		}
+
+		progress := models.ProcessProgress{
+			Current: i + 1,
+			Total:   total,
+			File:    filepath.Base(srcPath),
+			Success: success,
+		}
+		runtime.EventsEmit(a.ctx, EventProgress, progress)
+	}
+
+	result := map[string]interface{}{
+		"outputDir":      destDir,
+		"totalProcessed": total - len(failures),
+		"totalFailed":    len(failures),
+		"failures":       failures,
+	}
+	runtime.EventsEmit(a.ctx, EventComplete, result)
+	return nil
+}
+
+func (a *App) copySingleImage(srcPath, sourceDir, destDir string) error {
+	rel, err := filepath.Rel(sourceDir, srcPath)
+	if err != nil {
+		return fmt.Errorf("failed to resolve relative path: %w", err)
+	}
+
+	ext := filepath.Ext(srcPath)
+	format, quality, outputExt := imgservice.FormatFromExtension(ext)
+
+	destRel := strings.TrimSuffix(rel, ext) + outputExt
+	destPath := filepath.Join(destDir, destRel)
+
+	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
+	img, err := a.imageSvc.LoadImage(srcPath)
+	if err != nil {
+		return err
+	}
+
+	seed := uniquifySeed(srcPath)
+	uniqueImg := imgservice.Uniquify(img, seed)
+
+	outputBase := strings.TrimSuffix(destPath, outputExt)
+	return a.imageSvc.SaveImage(uniqueImg, outputBase, format, quality)
+}
+
+func uniquifySeed(path string) int64 {
+	h := fnv.New64a()
+	_, _ = h.Write([]byte(path))
+	return int64(h.Sum64()) ^ time.Now().UnixNano()
 }
 
 // CancelProcessing cancels ongoing batch processing.

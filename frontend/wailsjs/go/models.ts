@@ -1,5 +1,19 @@
 export namespace models {
 	
+	export class CopyImagesRequest {
+	    sourceDir: string;
+	    destDir: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CopyImagesRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.sourceDir = source["sourceDir"];
+	        this.destDir = source["destDir"];
+	    }
+	}
 	export class ProcessRequest {
 	    productImages: string[];
 	    frameImage: string;

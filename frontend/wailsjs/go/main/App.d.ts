@@ -7,6 +7,8 @@ export function CancelProcessing():Promise<void>;
 
 export function CheckForUpdate():Promise<updater.UpdateInfo>;
 
+export function CopyImages(arg1:models.CopyImagesRequest):Promise<void>;
+
 export function DownloadAndInstallUpdate(arg1:string):Promise<void>;
 
 export function GeneratePreview(arg1:models.ProcessRequest):Promise<string>;
