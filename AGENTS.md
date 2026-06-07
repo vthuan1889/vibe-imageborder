@@ -64,3 +64,25 @@ cd frontend && npm install && npm run build   # Build frontend
 - Go: Wrap errors with context, return early
 - Frontend: Emit error events via `runtime.EventsEmit(ctx, EventError, ...)`
 - Validate inputs (file existence, path safety, format support)
+
+## Cursor Cloud specific instructions
+
+**Product:** Wails v2 desktop app (Go backend + React frontend). Primary target is Windows; Linux dev is partially supported.
+
+**One-time Linux system packages** (not in the VM update script): `libgtk-3-dev`, `libwebkit2gtk-4.1-dev`, `build-essential`, `pkg-config`.
+
+**PATH:** Ensure Wails CLI is on `PATH`: `export PATH="$PATH:$(go env GOPATH)/bin"` (install once with `go install github.com/wailsapp/wails/v2/cmd/wails@latest`).
+
+**Frontend embed:** `main.go` embeds `frontend/dist`. Run `cd frontend && npm run build` before `go build` / `go test` on the root module, or let `wails build` / `wails dev` build it automatically.
+
+**Lint:** No ESLint or golangci-lint config in repo. Use `cd frontend && npm run build` (runs `tsc`) for frontend type-checking.
+
+**Tests on Linux (recommended):**
+- `go test ./internal/image ./tests -v` — image compositing, copy pipeline, templates (all pass headless)
+- `go test ./...` currently fails on Linux due to pre-existing issues: `internal/updater` uses Windows-only `syscall.SysProcAttr.HideWindow`, and `internal/template/service_test.go` references removed cache APIs
+
+**Wails GUI on Linux:** `wails dev` / `wails build` fail until `internal/updater/updater.go` is split with `//go:build windows` (or equivalent) for `DownloadAndInstall`. Use Windows or fix that package for full GUI E2E. `wails doctor` may warn about `libwebkit` even when `libwebkit2gtk-4.1-dev` is installed (Wails looks for 4.0 pkg-config name on some distros).
+
+**Standalone Vite preview** (`npm run preview`) serves static assets but the UI stays blank without the Wails runtime (`window.go.main`); do not use it as an app smoke test.
+
+**Core workflow smoke test (no GUI):** `go test ./tests -run TestIntegration_BasicComposite -v` writes `tests/output/test-composite.png` (product + frame composite).
